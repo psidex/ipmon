@@ -1,0 +1,21 @@
+[Unit]
+Description=ipmon
+After=syslog.target network.target
+
+[Service]
+Type=simple
+
+User=simon
+WorkingDirectory=/home/simon/ipmon
+ExecStart=/home/simon/ipmon/ipmon
+
+Restart=always
+RestartSec=10
+
+Environment=TWILIO_SID=
+Environment=TWILIO_TOKEN=
+Environment=IPMON_TWILIO_FROM=
+Environment=IPMON_TO=
+
+[Install]
+WantedBy=multi-user.target
