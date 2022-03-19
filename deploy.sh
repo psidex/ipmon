@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+set -ex
+go build -v -o ./ipmon ./cmd/ipmon
 sudo cp ipmon.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable ipmon.service

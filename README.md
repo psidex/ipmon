@@ -9,8 +9,9 @@ Also sends a polite copyable text to send to work chat.
 ```bash
 cd ipmon
 chmod +x *.sh
-./build.sh
 cp ipmon.service.example ipmon.service
 vi ipmon.service # Edit to your config
-./initservice.sh # Takes a few seconds, should show green status
+./deploy.sh # Takes a few seconds, should show green status
 ```
+
+Run `teardown.sh` to stop and remove the service.
