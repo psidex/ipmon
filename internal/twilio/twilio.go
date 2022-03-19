@@ -1,7 +1,6 @@
 package twilio
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -23,7 +22,7 @@ func NewTwilio(sid, token, from string) Twilio {
 	}
 }
 
-func (t Twilio) SendText(to, msg string) {
+func (t Twilio) SendText(to, msg string) error {
 	v := url.Values{}
 	v.Set("To", to)
 	v.Set("From", t.from)
@@ -32,7 +31,7 @@ func (t Twilio) SendText(to, msg string) {
 	rb := strings.NewReader(v.Encode())
 	req, err := http.NewRequest("POST", t.url, rb)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	req.SetBasicAuth(t.sid, t.token)
@@ -41,7 +40,5 @@ func (t Twilio) SendText(to, msg string) {
 
 	client := &http.Client{}
 	_, err = client.Do(req)
-	if err != nil {
-		log.Printf("Error sending text: %s", err)
-	}
+	return err
 }
