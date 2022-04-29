@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/psidex/ipmon/internal/ip"
-	"github.com/psidex/ipmon/internal/ipcache"
+	"github.com/psidex/ipmon/internal/stringcache"
 	"github.com/psidex/ipmon/internal/twilio"
 )
 
@@ -21,7 +21,7 @@ func main() {
 	to := os.Getenv("IPMON_TO")
 
 	if twilioSid == "" || twilioToken == "" || twilioFrom == "" || to == "" {
-		panic("TWILIO_SID, TWILIO_TOKEN, IPMON_TWILIO_FROM, IPMON_TO must be set")
+		panic("All of TWILIO_SID, TWILIO_TOKEN, IPMON_TWILIO_FROM, IPMON_TO must be set")
 	}
 
 	requests := []string{
@@ -34,9 +34,13 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	t := twilio.NewTwilio(twilioSid, twilioToken, twilioFrom)
-	c := ipcache.NewIpCache(cacheFile)
+	c := stringcache.NewCache(cacheFile)
 
-	prevIp := c.GetIp()
+	prevIp := c.Get()
+	if !ip.ValidAddress(prevIp) {
+		prevIp = ""
+	}
+
 	log.Printf("Started, loaded IP from cache: %s", prevIp)
 
 	for {
@@ -61,7 +65,7 @@ func main() {
 				log.Printf("Error sending text: %s", err)
 			}
 
-			err = c.SetIp(currentIp)
+			err = c.Set(currentIp)
 			if err != nil {
 				log.Printf("Error setting ip cache: %s", err)
 			}
