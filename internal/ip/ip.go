@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func ValidAddress(ip string) bool {
+func IsValidAddress(ip string) bool {
 	return net.ParseIP(ip) != nil
 }
 
@@ -25,7 +25,7 @@ func GetPublicIp() (string, error) {
 
 	ip := string(body)
 
-	if !ValidAddress(ip) {
+	if !IsValidAddress(ip) {
 		return "", errors.New("Invalid IP address from ipify.org: " + ip)
 	}
 

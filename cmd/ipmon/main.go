@@ -37,7 +37,7 @@ func main() {
 	c := stringcache.NewCache(cacheFile)
 
 	prevIp := c.Get()
-	if !ip.ValidAddress(prevIp) {
+	if !ip.IsValidAddress(prevIp) {
 		prevIp = ""
 	}
 

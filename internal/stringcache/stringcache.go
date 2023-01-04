@@ -2,7 +2,6 @@ package stringcache
 
 import (
 	"io/ioutil"
-	"os"
 )
 
 // Cache stores a single string on disk.
@@ -10,21 +9,18 @@ type Cache struct {
 	filePath string
 }
 
-func NewCache(file string) Cache {
-	return Cache{file}
+func NewCache(filePath string) Cache {
+	return Cache{filePath}
 }
 
-func (i Cache) Set(str string) error {
-	return ioutil.WriteFile(i.filePath, []byte(str), 0666)
+func (c Cache) Set(str string) error {
+	return ioutil.WriteFile(c.filePath, []byte(str), 0666)
 }
 
-func (i Cache) Get() string {
-	if _, err := os.Stat(i.filePath); err == nil {
-		data, err := ioutil.ReadFile(i.filePath)
-		if err != nil {
-			return ""
-		}
-		return string(data)
+func (c Cache) Get() string {
+	data, err := ioutil.ReadFile(c.filePath)
+	if err != nil {
+		return ""
 	}
-	return ""
+	return string(data)
 }
