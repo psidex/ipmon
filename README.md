@@ -4,14 +4,9 @@ A super simple app to monitor my LANs public IP and notify me of a renewal.
 
 Also sends a polite copyable text to send to work chat.
 
-## Setup & Run
-
 ```bash
+git clone https://github.com/psidex/ipmon.git
 cd ipmon
-chmod +x *.sh
-cp ipmon.service.example ipmon.service
-vi ipmon.service # Edit to your config
-./deploy.sh # Takes a few seconds, should show green status
+docker build -t ipmon:latest .
+docker run -d --name ipmon --restart unless-stopped ipmon:latest
 ```
-
-Run `teardown.sh` to stop and remove the service.
