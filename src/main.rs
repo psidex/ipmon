@@ -5,7 +5,7 @@ mod stringcache;
 mod twilio;
 
 const IP_CACHE_PATH: &str = "./ipmon.cache";
-const WAIT_TIME_SECONDS: u64 = 3;
+const WAIT_TIME_SECONDS: u64 = 60;
 
 fn process(
     client: &twilio::Client,
