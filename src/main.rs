@@ -22,8 +22,10 @@ fn process(
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let prev_ip_str = stringcache::get_str(IP_CACHE_PATH).unwrap_or("0.0.0.0".to_string());
-    let mut prev_ip = prev_ip_str.parse::<Ipv4Addr>()?;
+    let prev_ip_str = stringcache::get_str(IP_CACHE_PATH).unwrap_or("127.0.0.1".to_string());
+    let mut prev_ip = prev_ip_str
+        .parse::<Ipv4Addr>()
+        .unwrap_or(Ipv4Addr::new(127, 0, 0, 1));
     println!("Loaded {} from cache", prev_ip);
 
     let twilio_sid = env::var("TWILIO_SID")?;
