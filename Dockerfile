@@ -1,5 +1,5 @@
 FROM rust:1.66-bullseye as build
-RUN apt install build-essential -y
+RUN apt update && apt install build-essential -y
 WORKDIR /ipmon
 COPY . .
 RUN cargo build --release
