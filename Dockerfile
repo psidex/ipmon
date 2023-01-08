@@ -1,5 +1,6 @@
 FROM rust:1.66-bullseye as build
-RUN apt update && apt install build-essential -y
+RUN apt update && apt upgrade -y
+RUN apt install -y g++-aarch64-linux-gnu libc6-dev-arm64-cross
 WORKDIR /ipmon
 COPY . .
 RUN cargo build --release
