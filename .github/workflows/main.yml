@@ -16,6 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # https://github.com/docker/buildx/issues/495#issuecomment-1043341496
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+        id: qemu
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: linux/arm64
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
