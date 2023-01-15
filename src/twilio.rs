@@ -21,7 +21,7 @@ pub fn build_client(sid: String, token: String, from: String) -> Client {
 }
 
 impl Client {
-    pub fn send_text(&self, to: &String, message: &String) -> Result<(), Box<dyn Error>> {
+    pub fn send_text(&self, to: &str, message: &str) -> Result<(), Box<dyn Error>> {
         let client = reqwest::blocking::Client::new();
         let form = [("To", to), ("From", &self.from), ("Body", message)];
         client
