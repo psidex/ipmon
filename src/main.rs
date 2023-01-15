@@ -59,7 +59,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     info!("twilio_from : {}", nice_secret(&twilio_from));
     info!("to          : {}", nice_secret(to));
 
-    let client = &twilio::build_client(twilio_sid, twilio_token, twilio_from);
+    let client = &twilio::Client::new(twilio_sid, twilio_token, twilio_from);
 
     info!("Starting loop");
     loop {
