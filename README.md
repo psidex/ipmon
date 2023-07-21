@@ -1,6 +1,8 @@
 # ipmon
 
-A super simple app to monitor my LANs public IP and notify me of a renewal using a forwardable text.
+A super simple app and web server to monitor my LANs public IP and notify me of a renewal using a forwardable text.
+
+## Client
 
 Currently the Dockerfile and GitHub action are tailored for an ARM64 build (to run on my Raspberry Pi 4B).
 

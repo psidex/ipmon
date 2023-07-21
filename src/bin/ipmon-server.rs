@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 
 use axum::{extract::ConnectInfo, http::header::HeaderMap, routing::get, Router};
+use ipmon::platform;
 
 #[tokio::main]
 async fn main() {
@@ -9,7 +10,12 @@ async fn main() {
     // build our application with a route
     let app = Router::new().route("/", get(handler));
 
-    axum::Server::bind(&"127.0.0.1:8080".parse().unwrap())
+    let ip = match platform::is_debug() {
+        true => "127.0.0.1:8080",
+        false => "0.0.0.0:8080",
+    };
+
+    axum::Server::bind(&ip.parse::<SocketAddr>().unwrap())
         .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();
