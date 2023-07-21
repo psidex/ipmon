@@ -27,7 +27,7 @@ docker run -d --name ipmon \
 
 ## Server
 
-A web server that replies with the value of (in order of enumeration):
+A web server that replies with the value of one of (in order of enumeration):
 - X-Real-Ip
 - X-Forwarded-For
 - Connection IP
