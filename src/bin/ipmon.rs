@@ -1,17 +1,22 @@
+use std::str::FromStr;
 use std::{env, fs};
 use std::{error::Error, net::Ipv4Addr};
 
 use log::info;
-use simple_logger;
 
-mod twilio;
+use ipmon::platform;
+use ipmon::twilio;
 
 const IP_CACHE_PATH: &str = "./ipmon.cache";
 const SLEEP_TIME_SECONDS: u64 = 60;
 
 fn get_current_ipv4() -> Result<Ipv4Addr, Box<dyn Error>> {
-    let get = reqwest::blocking::get("https://api.ipify.org/")?;
-    Ok(get.text()?.parse::<Ipv4Addr>()?)
+    let get = reqwest::blocking::get("https://checkip.amazonaws.com/")?;
+    let ip = match platform::is_debug() {
+        true => Ipv4Addr::from_str("127.0.0.1")?,
+        false => get.text()?.parse::<Ipv4Addr>()?,
+    };
+    Ok(ip)
 }
 
 fn nice_secret(secret: &String) -> String {
@@ -27,20 +32,32 @@ fn nice_secret(secret: &String) -> String {
 
 fn process(
     client: &twilio::Client,
-    to: &String,
+    to: &str,
     prev_ip: Ipv4Addr,
 ) -> Result<Ipv4Addr, Box<dyn Error>> {
     let addr = get_current_ipv4()?;
+
     if addr != prev_ip {
         info!("New IPv4: {}", addr);
-        client.send_text(to, &format!("Can I have a new IP please, {}", addr))?;
-        fs::write(IP_CACHE_PATH, &addr.to_string())?;
+
+        if !platform::is_debug() {
+            client.send_text(to, &format!("Can I have a new IP please, {}", addr))?;
+        } else {
+            info!("Would send: \"Can I have a new IP please, {}\"", addr);
+        }
+
+        fs::write(IP_CACHE_PATH, addr.to_string())?;
     }
+
     Ok(addr)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
     simple_logger::init_with_level(log::Level::Info).unwrap();
+
+    if platform::is_debug() {
+        info!("Running in debug mode, won't use APIs")
+    }
 
     let mut prev_ip = fs::read_to_string(IP_CACHE_PATH)
         .unwrap_or("127.0.0.1".to_string())

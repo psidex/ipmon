@@ -1,0 +1,9 @@
+FROM rust:1.71 as build
+WORKDIR /ipmon
+COPY . .
+RUN cargo build --bin ipmon-server --release
+
+FROM debian:bullseye-slim
+WORKDIR /app
+COPY --from=build /ipmon/target/release/ipmon-server ./
+ENTRYPOINT ["/app/ipmon-server"]

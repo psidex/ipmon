@@ -1,0 +1,28 @@
+use std::net::SocketAddr;
+
+use axum::{extract::ConnectInfo, http::header::HeaderMap, routing::get, Router};
+
+#[tokio::main]
+async fn main() {
+    simple_logger::init_with_level(log::Level::Info).unwrap();
+
+    // build our application with a route
+    let app = Router::new().route("/", get(handler));
+
+    axum::Server::bind(&"127.0.0.1:8080".parse().unwrap())
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
+        .unwrap();
+}
+
+async fn handler(headers: HeaderMap, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> String {
+    let client_ip;
+    if headers.contains_key("X-Real-Ip") {
+        client_ip = headers["X-Real-Ip"].to_str().unwrap().to_owned();
+    } else if headers.contains_key("X-Forwarded-For") {
+        client_ip = headers["X-Forwarded-For"].to_str().unwrap().to_owned();
+    } else {
+        client_ip = addr.to_string();
+    }
+    client_ip
+}
