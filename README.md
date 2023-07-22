@@ -13,7 +13,7 @@ Currently the Dockerfile and GitHub action are tailored for an ARM64 build (to r
 cd ~
 git clone https://github.com/psidex/ipmon.git
 cd ipmon
-docker build -t psidex/ipmon:latest Dockerfile.client
+docker build -t psidex/ipmon:latest -f Dockerfile.client .
 cd /your/working/directory
 cp ~/ipmon/ipmon.env .
 vi ipmon.env
@@ -36,7 +36,7 @@ A web server that replies with the value of one of (in order of enumeration):
 cd ~
 git clone https://github.com/psidex/ipmon.git
 cd ipmon
-docker build -t psidex/ipmon-server:latest Dockerfile.server
+docker build -t psidex/ipmon-server:latest -f Dockerfile.server .
 docker run -d --name ipmon-server \
     --restart unless-stopped \
     psidex/ipmon-server:latest
