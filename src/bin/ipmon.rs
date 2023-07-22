@@ -11,7 +11,7 @@ const IP_CACHE_PATH: &str = "./ipmon.cache";
 const SLEEP_TIME_SECONDS: u64 = 60;
 
 fn get_current_ipv4() -> Result<Ipv4Addr, Box<dyn Error>> {
-    let get = reqwest::blocking::get("https://checkip.amazonaws.com/")?;
+    let get = reqwest::blocking::get("https://ip.simonj.dev/")?;
     let ip = match platform::is_debug() {
         true => Ipv4Addr::from_str("127.0.0.1")?,
         false => get.text()?.parse::<Ipv4Addr>()?,

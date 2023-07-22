@@ -1,11 +1,14 @@
 use std::net::SocketAddr;
 
 use axum::{extract::ConnectInfo, http::header::HeaderMap, routing::get, Router};
+use log::info;
 
 use ipmon::platform;
 
 #[tokio::main]
 async fn main() {
+    simple_logger::init_with_level(log::Level::Info).unwrap();
+
     let app = Router::new().route("/", get(handler));
 
     let ip = match platform::is_debug() {
@@ -28,5 +31,6 @@ async fn handler(headers: HeaderMap, ConnectInfo(addr): ConnectInfo<SocketAddr>)
     } else {
         client_ip = addr.to_string();
     }
+    info!("Request from: {}", client_ip);
     client_ip
 }
