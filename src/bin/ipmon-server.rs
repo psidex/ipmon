@@ -9,7 +9,9 @@ use ipmon::platform;
 async fn main() {
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
-    let app = Router::new().route("/", get(handler));
+    let app = Router::new()
+        .route("/", get(handle_root))
+        .route("/health", get(handle_health));
 
     let ip = match platform::is_debug() {
         true => "127.0.0.1:8080",
@@ -22,7 +24,11 @@ async fn main() {
         .unwrap();
 }
 
-async fn handler(headers: HeaderMap, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> String {
+async fn handle_health() {
+    // Don't return anything, but not erring means 200 will be sent to client.
+}
+
+async fn handle_root(headers: HeaderMap, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> String {
     let client_ip;
     if headers.contains_key("X-Real-Ip") {
         client_ip = headers["X-Real-Ip"].to_str().unwrap().to_owned();
