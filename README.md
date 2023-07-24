@@ -61,5 +61,6 @@ The server provides 2 endpoints, `/` (for your IP) and `/health` (returns 200 wi
 ```bash
 docker run -d --name ipmon-server \
     --restart unless-stopped \
+    -p 8080:8080 \
     psidex/ipmon-server:latest
 ```

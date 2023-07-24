@@ -25,10 +25,14 @@ async fn main() -> std::io::Result<()> {
         false => "0.0.0.0",
     };
 
+    // Log format from here, with real ip instad of peer ip:
+    // https://docs.rs/actix-web/latest/actix_web/middleware/struct.Logger.html
+
     HttpServer::new(|| {
         App::new()
-            .wrap(Logger::default())
-            // .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(Logger::new(
+                "%{r}a \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T",
+            ))
             .service(health)
             .service(handler)
     })
