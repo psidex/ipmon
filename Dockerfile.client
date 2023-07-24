@@ -7,7 +7,7 @@ RUN cargo build --bin ipmon --release
 
 FROM debian:bullseye-slim
 RUN apt update && apt -y install ca-certificates python3-pip && rm -rf /var/lib/apt/lists/*
-RUN pip install apprise -y
+RUN pip install apprise
 WORKDIR /app
 COPY --from=build /ipmon/target/release/ipmon ./
 ENTRYPOINT ["/app/ipmon"]
