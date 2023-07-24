@@ -1,0 +1,6 @@
+server: "https://checkip.amazonaws.com/"
+interval: 600
+notifications:
+  - title: ""
+    body: "ipmon - IP changed to {{ip}}"
+    url: "twilio://abc:def@123/456"
