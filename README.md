@@ -38,7 +38,7 @@ Use the `server` key to set the IP web server, this can be an [ipmon-server](#se
 
 The `interval` key is the number of seconds ipmon will wait between checking for an IP change.
 
-If the `notifications` key is set, it should contain an array of objects, each with a `title`, `body`, and `url`. These will be passed into [apprise](https://github.com/caronc/apprise), which **will need to be installed and in your PATH if you're using ipmon as a standalone binary** (i.e. not the Docker image).
+If the `notifications` key is set, it should contain an array of objects, each with a `title`, `body`, and `url`. `body` can contain the string `{{ip}}` which will get replaced with the newly assigned IP. These will be passed into [apprise](https://github.com/caronc/apprise), which **will need to be installed and in your PATH if you're using ipmon as a standalone binary** (i.e. not the Docker image).
 
 Example config:
 
@@ -46,8 +46,8 @@ Example config:
 server: "https://checkip.amazonaws.com/"
 interval: 600
 notifications:
-  - title: ""
-    body: "ipmon - IP changed to %s"
+  - title: "ipmon"
+    body: "IP changed to {{ip}}"
     url: "twilio://abc:def@123/456"
 ```
 
