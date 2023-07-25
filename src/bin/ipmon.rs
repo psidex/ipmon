@@ -9,8 +9,9 @@ const IP_CACHE_PATH: &str = "./ipmon.cache";
 fn get_current_ipv4(server_url: &str) -> Result<Ipv4Addr, Box<dyn Error>> {
     let ip = match platform::is_debug() {
         true => Ipv4Addr::from_str("127.0.0.1")?,
-        false => reqwest::blocking::get(server_url)?
-            .text()?
+        false => ureq::get(server_url)
+            .call()?
+            .into_string()?
             .parse::<Ipv4Addr>()?,
     };
     Ok(ip)
