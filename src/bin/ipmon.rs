@@ -11,7 +11,8 @@ fn get_current_ipv4(server_url: &str) -> Result<Ipv4Addr, Box<dyn Error>> {
         true => Ipv4Addr::from_str("127.0.0.1")?,
         false => ureq::get(server_url)
             .call()?
-            .into_string()?
+            .into_body()
+            .read_to_string()?
             .parse::<Ipv4Addr>()?,
     };
     Ok(ip)
