@@ -7,8 +7,9 @@ RUN cargo build --bin ipmon --release
 
 FROM debian:bookworm-slim
 RUN apt update && apt -y install ca-certificates python3-pip pipx && rm -rf /var/lib/apt/lists/*
-RUN pipx ensurepath
 RUN pipx install apprise
+# pipx bin bath
+ENV PATH="$PATH:/root/.local/bin"
 WORKDIR /app
 COPY --from=build /ipmon/target/release/ipmon ./
 ENTRYPOINT ["/app/ipmon"]
