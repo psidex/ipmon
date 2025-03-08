@@ -1,45 +1,40 @@
-use std::{error::Error, fs, net::Ipv4Addr, str::FromStr};
+use std::{error::Error, fs, net::Ipv4Addr};
 
 use log::info;
 
-use ipmon::{client::apprise, client::config, platform};
+mod apprise;
+mod config;
 
 const IP_CACHE_PATH: &str = "./ipmon.cache";
 
 fn get_current_ipv4(server_url: &str) -> Result<Ipv4Addr, Box<dyn Error>> {
-    let ip = match platform::is_debug() {
-        true => Ipv4Addr::from_str("127.0.0.1")?,
-        false => ureq::get(server_url)
-            .call()?
-            .into_body()
-            .read_to_string()?
-            .parse::<Ipv4Addr>()?,
-    };
-    Ok(ip)
+    Ok(ureq::get(server_url)
+        .call()?
+        .into_body()
+        .read_to_string()?
+        .trim()
+        .parse::<Ipv4Addr>()?)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
-    if platform::is_debug() {
-        info!("Running in debug mode, won't use IP server or apprise")
-    }
-
     if !apprise::exists() {
-        panic!("cannot find apprise binary");
+        panic!("Could not find apprise binary");
     }
 
-    let mut config_path: String = "config.yaml".to_owned();
+    let mut config_path: String = "./config.yaml".to_owned();
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 {
         config_path = args[1..].join(" ")
     }
 
     let cfg = config::load_config(&config_path);
-    info!("Loaded config");
+    info!("Loaded config from {}", config_path);
 
     let mut prev_ip = fs::read_to_string(IP_CACHE_PATH)
         .unwrap_or("127.0.0.1".to_string())
+        .trim()
         .parse::<Ipv4Addr>()
         .unwrap_or(Ipv4Addr::new(127, 0, 0, 1));
 
@@ -66,15 +61,13 @@ fn main() -> Result<(), Box<dyn Error>> {
             for notif_cfg in cfg.notifications.iter() {
                 info!("Sending notification");
 
-                if !platform::is_debug()
-                    && !apprise::run_with(
-                        &notif_cfg.title,
-                        &notif_cfg.body.replace("{{ip}}", prev_ip_str),
-                        &notif_cfg.url,
-                    )
-                {
-                    // TODO: run_with should return what the err was
-                    info!("Failed to run apprise");
+                match apprise::run_with(
+                    &notif_cfg.title,
+                    &notif_cfg.body.replace("{{ip}}", prev_ip_str),
+                    &notif_cfg.url,
+                ) {
+                    Ok(_) => (),
+                    Err(e) => info!("Apprise failed: {}", e),
                 }
             }
         }
