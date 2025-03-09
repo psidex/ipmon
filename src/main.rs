@@ -17,6 +17,12 @@ fn get_current_ipv4(server_url: &str) -> Result<Ipv4Addr, Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    ctrlc::set_handler(move || {
+        println!("Signal detected, exiting...");
+        std::process::exit(0);
+    })
+    .expect("Failed to set Ctrl-C handler");
+
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
     if !apprise::exists() {
